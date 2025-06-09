@@ -1,0 +1,9 @@
+.card-img{
+    object-fit: contain;
+    aspect-ratio: 3/2;
+}
+
+.card{
+    display: flex;
+    height: 530px;
+}
