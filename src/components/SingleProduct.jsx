@@ -2,11 +2,15 @@ import { useParams } from "react-router-dom";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { useCart } from '../CartProvider';
+import { useAuth } from '../AuthCont';
+import { useNavigate } from "react-router-dom";
 
 function SingleProduct() {
     const { addToCart } = useCart();
     const { id } = useParams();
     const [product, setProduct] = useState([]);
+    const { isLoggedIn } = useAuth();
+    const navigate = useNavigate();
 
     useEffect(() => {
 
@@ -23,6 +27,9 @@ function SingleProduct() {
         fetchdata();
     }, [])
 
+    const handleAddtoCart = (product) => {
+        isLoggedIn ? addToCart(product) : navigate('/login');
+    }
     return (
         <>
             <div className="container my-5">
@@ -68,7 +75,7 @@ function SingleProduct() {
                         </div>
 
                         <div className="d-flex">
-                            <button className="btn btn-secondary rounded me-2" onClick={() => addToCart(product)}>
+                            <button className="btn btn-secondary rounded me-2" onClick={() => handleAddtoCart(product)}>
                                 Add to Cart
                             </button>
                             <button className="btn btn-outline-secondary rounded me-2">

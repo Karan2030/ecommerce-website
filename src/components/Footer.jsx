@@ -6,7 +6,7 @@ function Footer() {
 
     return (
         <>
-            <footer className="bg-dark text-light py-4 mt-auto">
+            <footer className="bg-dark text-light py-4 mt-auto flex-md-shrink-0">
                 <div className="container text-center">
                     <div className="row">
                         <div className="col-md-3">

@@ -2,11 +2,14 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { useCart } from '../CartProvider';
+import { useAuth } from '../AuthCont';
+
 
 function Products() {
   const { addToCart } = useCart();
   const [products, setProducts] = useState([]);
   const navigate = useNavigate();
+  const { isLoggedIn } = useAuth();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -21,13 +24,52 @@ function Products() {
     fetchData();
   }, []);
 
+  const handleSort = (value) => {
+    let sortedProducts = [...products];
+    if (value === 'price_asc') {
+      sortedProducts.sort((a, b) => {
+        return a.price - b.price;
+      });
+      setProducts(sortedProducts);
+    } else if (value === 'price_desc') {
+      sortedProducts.sort((a, b) => {
+        return b.price - a.price;
+      });
+      setProducts(sortedProducts);
+    } else if (value === 'name_asc') {
+      sortedProducts.sort((a, b) => {
+        return a.title.localeCompare(b.title);
+      });
+      setProducts(sortedProducts);
+    } else if (value === 'name_desc') {
+      sortedProducts.sort((a, b) => {
+        return b.title.localeCompare(a.title);
+      });
+      setProducts(sortedProducts);
+
+    }
+  }
   const handleSingleProduct = (productId) => {
     navigate(`/product/${productId}`);
+  }
+
+  const handleAddToCart = (product) => {
+    isLoggedIn ? addToCart(product) : navigate('/login');
   }
   return (
     <>
       <div className="container my-4">
         <div className="row mb-4">
+          <div className="d-flex justify-content-end align-items-center">
+            <span className="">Sort by : </span>
+            <select name="sort" id="sort" className="form-select w-auto ms-2" onChange={(e) => handleSort(e.target.value)}>
+              <option value="" disabled selected>Select</option>
+              <option value="price_asc">Price(Low to High)</option>
+              <option value="price_desc">Price(High to Low)</option>
+              <option value="name_asc">Name(A-Z)</option>
+              <option value="name_desc">Name(Z-A)</option>
+            </select>
+          </div>
           <div className="col-12">
             <h2 className="text-center mb-4">Our Products</h2>
           </div>
@@ -70,7 +112,7 @@ function Products() {
                   <div className="d-flex justify-content-between mt-3">
                     <button
                       className="btn btn-outline-dark"
-                      onClick={() => addToCart(product)}
+                      onClick={() => handleAddToCart(product)}
                     >
                       Add to Cart
                     </button>

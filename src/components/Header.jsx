@@ -2,8 +2,11 @@ import { useState, useEffect } from "react";
 import { FaShoppingCart } from "react-icons/fa";
 import { useNavigate, Link } from "react-router-dom";
 import { useLocation } from "react-router-dom";
+import { useAuth } from "../AuthCont";
 
 function Header({ lightMode, darkMode }) {
+    const { isLoggedIn, logout } = useAuth();
+
     const Location = useLocation();
     const queryParams = new URLSearchParams(Location.search);
 
@@ -31,6 +34,11 @@ function Header({ lightMode, darkMode }) {
             darkMode();
         }
         setIsDark(!isDark);
+    }
+
+    const handleLogout = () => {
+        logout();
+        navigate('/');
     }
     return (
         <>
@@ -90,9 +98,22 @@ function Header({ lightMode, darkMode }) {
                             <li className="nav-item">
                                 <Link className="nav-link" to="/deals">Deals</Link>
                             </li>
-                            <li className="nav-item">
-                                <Link className="nav-link" to="/account">Account</Link>
-                            </li>
+                            {!isLoggedIn && (
+                                <li className="nav-item">
+                                    <Link className="nav-link" to="/login">Login</Link>
+                                </li>
+                            )}
+                            {isLoggedIn && (
+                                <li className="nav-item">
+                                    <Link className="nav-link" to="/account">Account</Link>
+                                </li>
+                            )}
+                            {isLoggedIn && (
+                                <li className="nav-item">
+                                    <button onClick={handleLogout}>Logout</button>
+                                </li>
+                            )}
+                            {isLoggedIn && (
                             <li className="nav-item">
                                 <Link className="nav-link position-relative" to="/cart">
                                     <FaShoppingCart size={24} />
@@ -103,6 +124,7 @@ function Header({ lightMode, darkMode }) {
                                     )}
                                 </Link>
                             </li>
+                            )}
                             <li className="nav-item">
                                 <div className="form-check form-switch">
                                     <button className={`btn btn-lg ${isDark ? 'btn-dark' : 'btn-light'} rounded-pill px-4`} onClick={handleToggle}>
